@@ -131,6 +131,9 @@ int main() {
     // Preview texture allocations.
     sf::Texture* texture = new sf::Texture();
 
+    // Log.
+    LevelDesignerLog::consoleLog("Ready. Set. Go!");
+
     // Main window loop.
     while(window.isOpen()) {
         int ibTexturePos = 0;
@@ -142,8 +145,8 @@ int main() {
         ImGui::Begin(IMGUI_WINDOW_TITLE, &ldsettings.imguiOpen, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
         // Set ImGui window properties.
-        ImGui::SetWindowSize(ImVec2 {IMGUI_WINDOW_WIDTH, dynHeightMain});
-        ImGui::SetWindowPos(ImVec2 {IMGUI_WINDOW_X, IMGUI_WINDOW_Y});
+        ImGui::SetWindowSize(ImVec2(IMGUI_WINDOW_WIDTH, dynHeightMain));
+        ImGui::SetWindowPos(ImVec2(IMGUI_WINDOW_X, IMGUI_WINDOW_Y));
 
         // Update theme.
         LevelDesignerUtilities::updateTheme(ldsettings.theme);
@@ -158,8 +161,12 @@ int main() {
 
             // Handle window closing and window resize.
             if(event.type == sf::Event::Closed) {
+                LevelDesignerLog::consoleLog("Closing window...");
+
                 window.close();
             } else if(event.type == sf::Event::Resized) {
+                LevelDesignerLog::consoleLog("Resize Event.");
+
                 dynHeightMain = event.size.height;
 
                 ObjectEditorUI::dynHeight = event.size.height;
@@ -197,6 +204,8 @@ int main() {
                 objectsBuffer.removeWithIndex(selectedObjectIndex);
 
                 selectedObjectIndex = -1;
+
+                LevelDesignerLog::consoleLog("Removed element from scene.");
             }
         }
 
@@ -207,6 +216,8 @@ int main() {
                 objectToCopy.lobjectname = "Copy of " + objectToCopy.lobjectname;
 
                 objectsBuffer.addObject(objectToCopy);
+
+                LevelDesignerLog::consoleLog("Copied object on scene.");
             }
         }
 
@@ -325,7 +336,7 @@ int main() {
                     ImGui::ColorEdit4("Color.##circle", circleColor);
 
                     // Checks.
-                    if(circleRadius <= 0) { imgw_log("Circle radius should be more than 0.", ImVec4 {1.0f, 0.0, 0.0, 1.0f}); }
+                    if(circleRadius <= 0) { imgw_log("Circle radius should be more than 0.", ImVec4(1.0f, 0.0, 0.0, 1.0f)); }
 
                     // Create circle.
                     if(ImGui::Button("Create circle.")) {
@@ -440,6 +451,7 @@ int main() {
                     }
                 }
 
+                // Fix sprite size.
                 if(spriteWidth > 2.0f) {
                     spriteWidth = 2.0f;
                 } else if(spriteWidth < 0.0f) {
@@ -453,27 +465,31 @@ int main() {
                 }
 
                 // Checks.
-                if(strlen(spritePath) <= 3) { imgw_log("Sprite path should be specified.", ImVec4 {1.0f, 0.0f, 0.0f, 1.0f}); }
+                if(strlen(spritePath) <= 3) { imgw_log("Sprite path should be specified.", ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); }
+
+                if(!LevelDesignerUtilities::exists(spritePath)) { imgw_log("Can't find sprite.", ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); }
 
                 // Create sprite.
                 if(ImGui::Button("Create sprite.")) {
-                    LevelObject sprite;
+                    if(LevelDesignerUtilities::exists(spritePath)) {
+                        LevelObject sprite;
 
-                    sprite.lobjecttype = LevelObjectType::SPRITE;
-
-                    sprite.lobjectname = objectName;
-
-                    sprite.objectSWidth = spriteWidth;
-                    sprite.objectSHeight = spriteHeight;
-
-                    sprite.objectX = spriteX;
-                    sprite.objectY = spriteY;
-
-                    sprite.spritePath = spritePath;
-
-                    objectsBuffer.addObject(sprite);
-
-                    LevelDesignerLog::consoleLog("Sprite '" + std::string(objectName) + "' created.");
+                        sprite.lobjecttype = LevelObjectType::SPRITE;
+    
+                        sprite.lobjectname = objectName;
+    
+                        sprite.objectSWidth = spriteWidth;
+                        sprite.objectSHeight = spriteHeight;
+    
+                        sprite.objectX = spriteX;
+                        sprite.objectY = spriteY;
+    
+                        sprite.spritePath = spritePath;
+    
+                        objectsBuffer.addObject(sprite);
+    
+                        LevelDesignerLog::consoleLog("Sprite '" + std::string(objectName) + "' created.");
+                    }
                 }
 
                 // Preview.
@@ -489,17 +505,14 @@ int main() {
             static std::string objectPath;
 
             for(int objectPosition=0; objectPosition < loadedObjectsBuffer.getBufferSize(); ++objectPosition) {
-                // Is it good idea to load texture every frame?
-                // if(!ibTexture->loadFromFile(loadedObjectsBuffer.getWithIndex(objectPosition).spritePath.value())) {
-                //     LevelDesignerLog::consoleLog("Failed to show IB texture preview.");
-                // } else {
-                //     LevelDesignerLog::consoleLog("Loaded IB texture preview successfully.");
-                // }
-
-                if(ImGui::ImageButton(ibTexturesVector.at(objectPosition), ImVec2 {DEFAULT_TEXTURE_PREVIEW_WIDTH - 10, DEFAULT_TEXTURE_PREVIEW_HEIGHT - 10}, -1, sf::Color::Transparent, sf::Color::White)) {
+                // Create object spawning button.
+                if(ImGui::ImageButton(ibTexturesVector.at(objectPosition), ImVec2(DEFAULT_TEXTURE_PREVIEW_WIDTH - 10, DEFAULT_TEXTURE_PREVIEW_HEIGHT - 10), -1, sf::Color::Transparent, sf::Color::White)) {
                     objectsBuffer.addObject(loadedObjectsBuffer.getWithIndex(objectPosition));
+
+                    LevelDesignerLog::consoleLog("Spawned LDOBJ from button.");
                 }
 
+                // Grid.
                 if(ibTexturePos % 2 == 0) {
                     ImGui::SameLine();
                 }
@@ -511,9 +524,11 @@ int main() {
 
             ImGui::InputText("Object (.ldobj).", &objectPath);
 
+            // Load LDOBJ.
             if(ImGui::Button("Load.")) {
                 int parseCode = ldobjParser.parse((objectPath + std::string(LDOBJ)).c_str());
 
+                // Setup LDOBJ if parseCode is successful.
                 if(parseCode == 1) {
                     failedToLoadLDOBJ = true;
                 } else if(parseCode == 0) {
@@ -553,8 +568,9 @@ int main() {
                 }
             }
 
+            // Logs.
             if(failedToLoadLDOBJ) {
-                imgw_log("Failed to load LDOBJ.", ImVec4 {1.0f, 0.0f, 0.0f, 1.0f});
+                imgw_log("Failed to load LDOBJ.", ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
             }
         }
 
@@ -564,9 +580,11 @@ int main() {
 
             ImGui::InputText("Scene Path.", &scenePath);
 
+            // Import.
             if(ImGui::Button("Import.")) {
                 int parseCode;
 
+                // Parse.
                 try {
                     parseCode = sceneParser.parse((scenePath + std::string(TDSCENE)).c_str());
                 } catch(std::exception const& exception) {
@@ -575,27 +593,33 @@ int main() {
                     parseCode = 1;
                 }
 
+                // Parse if parseCode is successful.
                 if(parseCode == 1) {
                     failedToLoadScene = true;
 
                     LevelDesignerLog::consoleLog("Failed to import scene.");
                 } else if(parseCode == 0) {
+                    // Set NO errors.
                     failedToLoadScene = false;
 
                     sFailedToLoadLDOBJ = false;
 
                     corruptedScene = false;
 
+                    // Load project name.
                     projectName = sceneParser.projectName;
 
+                    // Load scene background.
                     backgroundColor[0] = sceneParser.sceneBackground[0];
                     backgroundColor[1] = sceneParser.sceneBackground[1];
                     backgroundColor[2] = sceneParser.sceneBackground[2];
 
+                    // Load objects.
                     for(int posObjectsBuffer=0; posObjectsBuffer < sceneParser.objectsBuffer.getBufferSize(); ++posObjectsBuffer) {
                         objectsBuffer.addObject(sceneParser.objectsBuffer.getWithIndex(posObjectsBuffer));
                     }
 
+                    // Load LDOBJ`s.
                     for(int posLDOBJS=0; posLDOBJS < sceneParser.objectsToLoad.size(); ++posLDOBJS) {
                         // TODO: Write function to load LDOBJ.
                         int ldobjParseCode = ldobjParser.parse((sceneParser.objectsToLoad[posLDOBJS] + std::string(LDOBJ)).c_str());
@@ -649,7 +673,9 @@ int main() {
 
             ImGui::SameLine();
 
+            // Export.
             if(ImGui::Button("Export.")) {
+                // Export scene.
                 sceneParser.write((scenePath + std::string(TDSCENE)).c_str(), projectName, backgroundColor, objectsBuffer, objectsToLoad);
 
                 exported = objectsBuffer.getBufferSize() + objectsToLoad.size();
@@ -657,24 +683,25 @@ int main() {
                 LevelDesignerLog::consoleLog("Scene exported successfully.");
             }
 
+            // Logs.
             if(imported > 0) {
-                imgw_log(("Imported " + std::to_string(imported) + " entities.").c_str(), ImVec4 {0.0f, 1.0f, 0.0f, 1.0f});
+                imgw_log(("Imported " + std::to_string(imported) + " entities.").c_str(), ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
             }
 
             if(exported > 0) {
-                imgw_log(("Exported " + std::to_string(exported) + " entities.").c_str(), ImVec4 {0.0f, 1.0f, 0.0f, 1.0f});
+                imgw_log(("Exported " + std::to_string(exported) + " entities.").c_str(), ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
             }
 
             if(failedToLoadScene) {
-                imgw_log("Failed to load scene.", ImVec4 {1.0f, 0.0f, 0.0f, 1.0f});
+                imgw_log("Failed to load scene.", ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
             }
 
             if(sFailedToLoadLDOBJ) {
-                imgw_log("Failed to load scene LDOBJS.", ImVec4 {1.0f, 0.0f, 0.0f, 1.0f});
+                imgw_log("Failed to load scene LDOBJS.", ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
             }
 
             if(corruptedScene) {
-                imgw_log("Failed to load scene. Scene may be corrupted.", ImVec4 {1.0f, 0.0f, 0.0f, 1.0f});
+                imgw_log("Failed to load scene. Scene may be corrupted.", ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
             }
         }
 
@@ -682,15 +709,16 @@ int main() {
         for(int bufferPosition=0; bufferPosition < objectsBuffer.getBufferSize(); ++bufferPosition) {
             LevelObject& object = objectsBuffer.getReferenceBuffer()[bufferPosition];
 
+            // If Drag&Drop.
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 ImVec2 mousePosition = ImGui::GetMousePos();
 
                 if(LevelDesignerUtilities::mIntersects(sf::Vector2(object.objectWidth, object.objectHeight), sf::Vector2(object.objectX, object.objectY), mousePosition)) {
                     if(!dragndropping) {
-                        if(object.lobjecttype != LevelObjectType::SPRITE && object.lobjecttype != LevelObjectType::CIRCLE) {
+                        if(object.lobjecttype != LevelObjectType::SPRITE && object.lobjecttype != LevelObjectType::CIRCLE) { // Trying to normalize size...
                             object.objectX = mousePosition.x - (object.objectWidth / 2);
                             object.objectY = mousePosition.y - (object.objectHeight / 2);
-                        } else {
+                        } else {  // Drag.
                             object.objectX = mousePosition.x;
                             object.objectY = mousePosition.y;
                         }
@@ -708,6 +736,7 @@ int main() {
                 dragndropping = false;
             }
 
+            // Just choose the object.
             if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
                 ImVec2 mousePosition = ImGui::GetMousePos();
 
