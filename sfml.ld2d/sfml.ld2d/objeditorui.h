@@ -24,9 +24,9 @@ public:
 
         ImGui::Begin(OBJECT_EDITOR_UI_TITLE, &open, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-        ImGui::SetWindowSize(ImVec2 {OBJECT_EDITOR_UI_WIDTH, ObjectEditorUI::dynHeight});
+        ImGui::SetWindowSize(ImVec2(OBJECT_EDITOR_UI_WIDTH, ObjectEditorUI::dynHeight));
 
-        ImGui::SetWindowPos(ImVec2 {ObjectEditorUI::dynX, OBJECT_EDITOR_UI_Y});
+        ImGui::SetWindowPos(ImVec2(ObjectEditorUI::dynX, OBJECT_EDITOR_UI_Y));
 
         if(selectedObjectIndex != -1) {
             LevelObject& object = buffer[selectedObjectIndex];
