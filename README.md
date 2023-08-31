@@ -3,10 +3,11 @@
 </p>
 <p align="center"><b>
   SFML.LD2D is easy and powerful level designer for SFML.<br>
-  Level designer supports basic shapes, text, sprites, shader and a lot more, and more is coming.<br><br>
+  Level designer supports basic shapes, text, sprites, shader and a lot more, and more is coming.<br>
+  Warning!: SFML.LD2D is very unstable. New updates are coming.<br><br>
   SFML.LD2D Stack:<br>
   <img src="Stack.png"><br>
-  Level Designer features for v1.0:<br><br>
+  Level Designer features for v1.1:<br><br>
   Designer:<br><br>
   ⊛ Easy and simple.<br>
   ⊛ Basic Drag&Drop.<br>
