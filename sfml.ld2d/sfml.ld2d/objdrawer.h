@@ -10,6 +10,8 @@
 
 #include "shadertypes.h"
 
+#include "ldutils.h"
+
 #include "ldlog.h"
 
 #include <iostream>
@@ -23,9 +25,9 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
 
             rectangleShape.setPosition(sf::Vector2f(object.objectX, object.objectY));
 
-            if(object.objectRotation.has_value()) {
-                rectangleShape.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f);
+            rectangleShape.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f);
 
+            if(object.objectRotation.has_value()) {
                 rectangleShape.setRotation(object.objectRotation.value());
             }
 
@@ -57,9 +59,9 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                     //     object.sizeNormalized = true;
                     // }
 
-                    if(object.objectRotation.has_value()) {
-                        circleShape.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f);
+                    circleShape.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f);
 
+                    if(object.objectRotation.has_value()) {
                         circleShape.setRotation(object.objectRotation.value());
                     }
 
@@ -86,10 +88,10 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                     fontPath = _fontPath;
                 }
 
-                if(!font.loadFromFile(fontPath)) {
+                if(!font.loadFromFile(LevelDesignerUtilities::getAbsolutePath(fontPath))) {
                     LevelDesignerLog::windowLog("objdrawer.h: failed to load font: '" + fontPath + "'.", window);
 
-                    font.loadFromFile(DEFAULT_WINDOW_FONT);
+                    font.loadFromFile(LevelDesignerUtilities::getAbsolutePath(DEFAULT_WINDOW_FONT));
                 }
 
                 font.setSmooth(true);
@@ -97,6 +99,8 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                 sf::Text text(object.text.value(), font, object.fontSize.value());
 
                 text.setPosition(object.objectX, object.objectY);
+
+                // text.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f); // No objectWidth and objectHeight 🥺?
 
                 if(!object.sizeNormalized) {
                     object.objectWidth = object.text.value().size() * object.fontSize.value();
@@ -135,12 +139,13 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
 
                 objectSprite.setPosition(object.objectX, object.objectY);
 
+                // objectSprite.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f); // No objectWidth and objectHeight 🥺?
+
                 if(!object.sizeNormalized) {
                     object.objectWidth = objectTexture.getSize().x;
                     object.objectHeight = objectTexture.getSize().y;
 
                     object.sizeNormalized = true;
-
                 }
 
                 if(object.objectRotation.has_value()) {
