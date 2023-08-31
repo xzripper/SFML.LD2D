@@ -25,6 +25,8 @@
 
 class LevelDesignerUtilities {
 public:
+    static inline bool release = false;
+
     static int glColorToSFMLColor(float c) {
         return round(c * 255.0);
     }
@@ -149,7 +151,7 @@ public:
     }
 
     static std::string getAbsolutePath(std::string path) {
-        return std::filesystem::absolute(std::filesystem::path(path)).string();
+        return (LevelDesignerUtilities::release ? "sfml.ld2d" : "") + std::filesystem::absolute(std::filesystem::path(path)).string();
     }
 
     static bool exists(std::string path) {

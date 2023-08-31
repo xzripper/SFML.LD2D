@@ -160,7 +160,7 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                     if(object.shader.value() == ShaderTypes::PIXELATE) {
                         sf::Shader pixelateShader;
 
-                        if(!pixelateShader.loadFromFile(SHADER_PIXELATE_PATH, sf::Shader::Fragment)) {
+                        if(!pixelateShader.loadFromFile(LevelDesignerUtilities::getAbsolutePath(SHADER_PIXELATE_PATH), sf::Shader::Fragment)) {
                             LevelDesignerLog::windowLog("Failed to load 'pixelate' shader.", window);
                         }
 
@@ -172,7 +172,7 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                     } else if(object.shader.value() == ShaderTypes::BLUR) {
                         sf::Shader blurShader;
 
-                        if(!blurShader.loadFromFile(SHADER_BLUR_PATH, sf::Shader::Fragment)) {
+                        if(!blurShader.loadFromFile(LevelDesignerUtilities::getAbsolutePath(SHADER_BLUR_PATH), sf::Shader::Fragment)) {
                             LevelDesignerLog::windowLog("Failed to load 'blur' shader.", window);
                         }
 
