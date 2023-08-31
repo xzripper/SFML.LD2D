@@ -1,5 +1,5 @@
 // Window constants.
-#define WINDOW_TITLE "SFML.LD2D C++ 17 [v1.0 BETA]."
+#define WINDOW_TITLE "SFML.LD2D C++ 17 [v1.1 BETA]."
 
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 1000
