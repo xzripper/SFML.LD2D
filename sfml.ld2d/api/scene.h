@@ -19,6 +19,9 @@
 
 #include <math.h>
 
+/**
+ * SFML.LD2D Scene API.
+*/
 class Scene {
 public:
     std::string scenePath;
@@ -31,6 +34,9 @@ public:
 
     SceneParser sceneParser;
 
+    /**
+     * Scene Constructor. Loads scene.
+    */
     Scene(std::string scenePath) {
         try {
             this->sceneParser.parse(scenePath.c_str());
@@ -51,12 +57,18 @@ public:
         this->sceneObjects = this->sceneParser.objectsBuffer;
     }
 
+    /**
+     * Draw scene.
+    */
     void drawScene(sf::RenderWindow &window) {
         for(int bufferPosition=0; bufferPosition < this->sceneObjects.getBufferSize(); ++bufferPosition) {
             ObjectDrawer::drawObject(this->sceneObjects.getReferenceBuffer()[bufferPosition], window);
         }
     }
 
+    /**
+     * Get scene background. Use when need to clear window with scene color.
+    */
     sf::Color getBackground() {
         return sf::Color(
             round(this->sceneBackground[0] * 255.0),
@@ -67,10 +79,16 @@ public:
         );
     }
 
+    /**
+     * Get reference on object from scene. Supports editing in runtime.
+    */
     LevelObject& getObject(std::string name) {
         return this->sceneObjects.getWithName(name);
     }
 
+    /**
+     * Remove object from scene by name.
+    */
     void removeObject(std::string name) {
         this->sceneObjects.removeWithName(name);
     }
