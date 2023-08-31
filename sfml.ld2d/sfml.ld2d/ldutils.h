@@ -151,7 +151,7 @@ public:
     }
 
     static std::string getAbsolutePath(std::string path) {
-        return (LevelDesignerUtilities::release ? "sfml.ld2d" : "") + std::filesystem::absolute(std::filesystem::path(path)).string();
+        return std::filesystem::current_path().string() + ((LevelDesignerUtilities::release ? "\\sfml.ld2d\\" : "\\") + path);
     }
 
     static bool exists(std::string path) {
