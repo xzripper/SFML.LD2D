@@ -25,7 +25,7 @@
 
 class LevelDesignerUtilities {
 public:
-    static inline bool release = false;
+    static inline bool release = true;
 
     static int glColorToSFMLColor(float c) {
         return round(c * 255.0);
