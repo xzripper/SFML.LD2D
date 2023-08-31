@@ -21,6 +21,8 @@
 
 #include <initializer_list>
 
+#include <filesystem>
+
 class LevelDesignerUtilities {
 public:
     static int glColorToSFMLColor(float c) {
@@ -144,6 +146,14 @@ public:
         }
     
         return formatted;
+    }
+
+    static std::string getAbsolutePath(std::string path) {
+        return std::filesystem::absolute(std::filesystem::path(path)).string();
+    }
+
+    static bool exists(std::string path) {
+        return std::filesystem::exists(std::filesystem::path(path));
     }
 };
 
