@@ -828,7 +828,6 @@ int main() {
             ObjectDrawer::drawObject(objectsBuffer.getReferenceBuffer()[bufferPosition], window);
         }
 
-
         // Render ImGui window.
         ImGui::SFML::Render(window);
 
