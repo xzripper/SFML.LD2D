@@ -100,11 +100,13 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
 
                 text.setPosition(object.objectX, object.objectY);
 
-                // text.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f); // No objectWidth and objectHeight 🥺?
+                if(object.sizeNormalized) {
+                    text.setOrigin(object.objectWidth / 2.f, object.objectHeight / 2.f);
+                }
 
                 if(!object.sizeNormalized) {
-                    object.objectWidth = object.text.value().size() * object.fontSize.value();
-                    object.objectHeight = object.fontSize.value();
+                    object.objectWidth = text.getGlobalBounds().width;
+                    object.objectHeight = text.getGlobalBounds().height;
 
                     object.sizeNormalized = true;
                 }
@@ -113,7 +115,7 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                     text.setRotation(object.objectRotation.value());
                 }
 
-                text.setColor(object.objectColor);
+                text.setFillColor(object.objectColor);
 
                 text.setStyle((object.bold.value() ? sf::Text::Bold : 0) | (object.italic.value() ? sf::Text::Italic : 0) | (object.underline.value() ? sf::Text::Underlined : 0));
 
@@ -164,9 +166,9 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                             LevelDesignerLog::windowLog("Failed to load 'pixelate' shader.", window);
                         }
 
-                        pixelateShader.setParameter("texture", sf::Shader::CurrentTexture);
+                        pixelateShader.setUniform("texture", sf::Shader::CurrentTexture);
 
-                        pixelateShader.setParameter("pixelThreshold", object.shader_pixelThreshold.value());
+                        pixelateShader.setUniform("pixelThreshold", object.shader_pixelThreshold.value());
 
                         window.draw(objectSprite, &pixelateShader);
                     } else if(object.shader.value() == ShaderTypes::BLUR) {
@@ -176,9 +178,9 @@ static void drawObject(LevelObject& object, sf::RenderWindow &window) {
                             LevelDesignerLog::windowLog("Failed to load 'blur' shader.", window);
                         }
 
-                        blurShader.setParameter("texture", sf::Shader::CurrentTexture);
+                        blurShader.setUniform("texture", sf::Shader::CurrentTexture);
 
-                        blurShader.setParameter("blurRadius", object.shader_blurRadius.value());
+                        blurShader.setUniform("blurRadius", object.shader_blurRadius.value());
 
                         window.draw(objectSprite, &blurShader);
                     }

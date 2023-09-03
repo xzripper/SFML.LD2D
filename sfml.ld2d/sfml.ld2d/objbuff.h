@@ -32,7 +32,7 @@ public:
     }
 
     LevelObject& getWithName(std::string name) {
-        for(int bufferPosition=0; bufferPosition < this->objectsBuffer.size(); ++bufferPosition) {
+        for(int bufferPosition=0; bufferPosition < static_cast<int>(this->objectsBuffer.size()); ++bufferPosition) {
             if(this->objectsBuffer.at(bufferPosition).lobjectname == name) {
                 return this->objectsBuffer.at(bufferPosition);
             }
@@ -44,7 +44,7 @@ public:
     }
 
     void removeWithName(std::string name) {
-        for(int bufferPosition=0; bufferPosition < this->objectsBuffer.size(); ++bufferPosition) {
+        for(int bufferPosition=0; bufferPosition < static_cast<int>(this->objectsBuffer.size()); ++bufferPosition) {
             if(this->objectsBuffer.at(bufferPosition).lobjectname == name) {
                 this->objectsBuffer.erase(this->objectsBuffer.begin() + bufferPosition);
             }

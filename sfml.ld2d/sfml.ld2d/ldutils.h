@@ -25,7 +25,7 @@
 
 class LevelDesignerUtilities {
 public:
-    static inline bool release = true;
+    static inline bool release = false;
 
     static int glColorToSFMLColor(float c) {
         return round(c * 255.0);
@@ -37,18 +37,18 @@ public:
 
     static sf::Color glColorArrayToSFMLColor(float rgb[]) {
         return sf::Color {
-            LevelDesignerUtilities::glColorToSFMLColor(rgb[0]),
-            LevelDesignerUtilities::glColorToSFMLColor(rgb[1]),
-            LevelDesignerUtilities::glColorToSFMLColor(rgb[2])
+            static_cast<sf::Uint8>(LevelDesignerUtilities::glColorToSFMLColor(rgb[0])),
+            static_cast<sf::Uint8>(LevelDesignerUtilities::glColorToSFMLColor(rgb[1])),
+            static_cast<sf::Uint8>(LevelDesignerUtilities::glColorToSFMLColor(rgb[2]))
         };
     }
 
     static sf::Color glColorArrayToSFMLColorA(float rgba[]) {
         return sf::Color {
-            LevelDesignerUtilities::glColorToSFMLColor(rgba[0]),
-            LevelDesignerUtilities::glColorToSFMLColor(rgba[1]),
-            LevelDesignerUtilities::glColorToSFMLColor(rgba[2]),
-            LevelDesignerUtilities::glColorToSFMLColor(rgba[3])
+            static_cast<sf::Uint8>(LevelDesignerUtilities::glColorToSFMLColor(rgba[0])),
+            static_cast<sf::Uint8>(LevelDesignerUtilities::glColorToSFMLColor(rgba[1])),
+            static_cast<sf::Uint8>(LevelDesignerUtilities::glColorToSFMLColor(rgba[2])),
+            static_cast<sf::Uint8>(LevelDesignerUtilities::glColorToSFMLColor(rgba[3]))
         };
     }
 
@@ -115,7 +115,7 @@ public:
             if(match.size() == 1) {
                 out.push_back(match.str(1));
             } else if(match.size() >= 2) {
-                for(int found=1; found < match.size(); ++found) {
+                for(int found=1; found < static_cast<int>(match.size()); ++found) {
                     out.push_back(match.str(found));
                 }
             }
@@ -143,7 +143,7 @@ public:
     static std::string format(std::string string, std::initializer_list<std::string> _format) {
         std::string formatted = string;
     
-        for(int position = 0; position < _format.size(); ++position) {
+        for(int position = 0; position < static_cast<int>(_format.size()); ++position) {
             formatted = std::regex_replace(formatted, std::regex("#" + std::to_string(position) + "\\b"), *(_format.begin() + position));
         }
     
