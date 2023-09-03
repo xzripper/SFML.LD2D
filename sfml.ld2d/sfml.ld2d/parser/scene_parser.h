@@ -46,7 +46,7 @@ public:
             return 1;
         }
 
-        for(int line=0; line < lines.size(); ++line) {
+        for(int line=0; line < static_cast<int>(lines.size()); ++line) {
             std::vector<std::string> parsedValues = LevelDesignerUtilities::split(LevelDesignerUtilities::rsearch(lines[line], REGEX_S)[0], DELIMITER);
 
             std::string type = parsedValues[0];
@@ -304,7 +304,7 @@ public:
             } else if(object.lobjecttype == LevelObjectType::EMPTY) {}
         }
 
-        for(int posObjToLoad=0; posObjToLoad < objectsToLoad.size(); ++posObjToLoad) {
+        for(int posObjToLoad=0; posObjToLoad < static_cast<int>(objectsToLoad.size()); ++posObjToLoad) {
             out += LevelDesignerUtilities::format(
                 "<LDOBJ:#0>\n",
 
