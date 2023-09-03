@@ -7,7 +7,7 @@
   Warning!: SFML.LD2D is very unstable. New updates are coming.<br><br>
   SFML.LD2D Stack:<br>
   <img src="Stack.png"><br>
-  Level Designer features for v1.1:<br><br>
+  Level Designer features for v1.2:<br><br>
   Designer:<br><br>
   ⊛ Easy and simple.<br>
   ⊛ Basic Drag&Drop.<br>
