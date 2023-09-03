@@ -40,6 +40,35 @@
 // ImGui Log Message Function.
 void imgw_log(const char* text, ImVec4 color) { ImGui::TextColored(color, text); }
 
+// Splash.
+void splash(sf::RectangleShape& bg, sf::Text& text, sf::Text& text2) {
+    for(int textA=0; textA <= 255; ++textA) {
+        text.setFillColor(sf::Color(text.getFillColor().r, text.getFillColor().g, text.getFillColor().b, textA));
+
+        text2.setFillColor(sf::Color(text2.getFillColor().r, text2.getFillColor().g, text2.getFillColor().b, textA));
+
+        sf::sleep(sf::milliseconds(SPLASH_TEXT_FADE_STIME));
+    }
+
+    sf::sleep(sf::seconds(SPLASH_TEXT_BEGIN_TO_FADE_OUT_STIME));
+
+    for(int textA=255; textA >= 0; --textA) {
+        text.setFillColor(sf::Color(text.getFillColor().r, text.getFillColor().g, text.getFillColor().b, textA));
+
+        text2.setFillColor(sf::Color(text2.getFillColor().r, text2.getFillColor().g, text2.getFillColor().b, textA));
+
+        sf::sleep(sf::milliseconds(SPLASH_TEXT_FADE_STIME));
+    }
+
+    sf::sleep(sf::seconds(BG_BEGIN_TO_FADE_OUT_STIME));
+
+    for(int bgA=255; bgA >= 0; --bgA) {
+        bg.setFillColor(sf::Color(bg.getFillColor().r, bg.getFillColor().g, bg.getFillColor().b, bgA));
+
+        sf::sleep(sf::milliseconds(BG_FADE_STIME));
+    }
+}
+
 // Main function.
 int main() {
     // Window initialization.
@@ -133,6 +162,34 @@ int main() {
 
     // Log.
     LevelDesignerLog::consoleLog("Ready. Set. Go!");
+
+    // Splash objects defining.
+    sf::RectangleShape mainBg(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
+
+    mainBg.setPosition(0, 0);
+
+    mainBg.setFillColor(sf::Color(SPLASH_BG_R, SPLASH_BG_G, SPLASH_BG_B, SPLASH_BG_A));
+
+    sf::Font splashTextFont;
+
+    splashTextFont.loadFromFile("builtin\\simplifica.ttf");
+
+    sf::Text splashText("SFML.LD2D.", splashTextFont, SPLASH_TEXT_1_CS);
+
+    splashText.setPosition((WINDOW_WIDTH / 2) - (splashText.getLocalBounds().width / 2), (WINDOW_HEIGHT / 2) - splashText.getLocalBounds().height);
+
+    splashText.setFillColor(sf::Color(SPLASH_TEXT_R, SPLASH_TEXT_G, SPLASH_TEXT_B, SPLASH_TEXT_A));
+
+    sf::Text splashText2("By Ivan Perzhinsky.", splashTextFont, SPLASH_TEXT_2_CS);
+
+    splashText2.setPosition(splashText.getPosition().x - 10, splashText.getPosition().y + (splashText.getPosition().y / 2) - 40);
+
+    splashText2.setFillColor(sf::Color(SPLASH_TEXT_R, SPLASH_TEXT_G, SPLASH_TEXT_B, SPLASH_TEXT_A));
+
+    // Run splash.
+    sf::Thread splashThread([&] () { splash(mainBg, splashText, splashText2); });
+
+    splashThread.launch();
 
     // Main window loop.
     while(window.isOpen()) {
@@ -620,7 +677,7 @@ int main() {
                     }
 
                     // Load LDOBJ`s.
-                    for(int posLDOBJS=0; posLDOBJS < sceneParser.objectsToLoad.size(); ++posLDOBJS) {
+                    for(int posLDOBJS=0; posLDOBJS < static_cast<int>(sceneParser.objectsToLoad.size()); ++posLDOBJS) {
                         // TODO: Write function to load LDOBJ.
                         int ldobjParseCode = ldobjParser.parse((sceneParser.objectsToLoad[posLDOBJS] + std::string(LDOBJ)).c_str());
 
@@ -771,8 +828,12 @@ int main() {
             ObjectDrawer::drawObject(objectsBuffer.getReferenceBuffer()[bufferPosition], window);
         }
 
+
         // Render ImGui window.
         ImGui::SFML::Render(window);
+
+        // Draw splash elements.
+        window.draw(mainBg); window.draw(splashText); window.draw(splashText2);
 
         // Update screen.
         window.display();
